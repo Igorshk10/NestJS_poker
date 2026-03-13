@@ -1,16 +1,15 @@
-import {Module} from '@nestjs/common';
-import {UsersService} from './users.service';
-import {UsersController} from './users.controller';
-import {TypeOrmModule} from "@nestjs/typeorm";
-import {Role} from "./entities/role.entity";
-import {User} from "./entities/user.entity";
-import {Wallet} from "./entities/wallet.entity";
-import {Room} from "../rooms/entities/room.entity";
+import { Module } from "@nestjs/common";
+import { UsersService } from "./users.service";
+import { UsersController } from "./users.controller";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Role } from "./entities/role.entity";
+import { User } from "./entities/user.entity";
+import { RolesSeedService } from "./roles.seed.service";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Wallet, User, Role, Room])],
-    controllers: [UsersController],
-    providers: [UsersService],
+  imports: [TypeOrmModule.forFeature([User, Role])],
+  controllers: [UsersController],
+  providers: [UsersService, RolesSeedService],
+  exports: [UsersService],
 })
-export class UsersModule {
-}
+export class UsersModule {}

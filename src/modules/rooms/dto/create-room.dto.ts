@@ -1,5 +1,5 @@
 export class CreateRoomDto {
-    name: string;
-    minBlind: number;
-    userId: number;
+  name: string;
+  minBlind: number;
+  userId: number;
 }
