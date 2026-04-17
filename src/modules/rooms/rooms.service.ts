@@ -5,6 +5,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Room } from "./entities/room.entity";
 import { Repository } from "typeorm";
 import { UsersService } from "../users/users.service";
+import { RoomDto } from "./dto/room.dto";
 
 @Injectable()
 export class RoomsService {
@@ -12,6 +13,29 @@ export class RoomsService {
     @InjectRepository(Room) private readonly roomRepository: Repository<Room>,
     @Inject(UsersService) private readonly usersService: UsersService,
   ) {}
+
+  async getAll(limit: number, page: number, isActive: boolean): Promise<RoomDto[]> {
+    const rooms: Room[] = await this.roomRepository.find({
+      where: {
+        isActive,
+      },
+      take: limit,
+      skip: (page - 1) * limit,
+    });
+
+    return rooms.map(
+      (room): RoomDto => ({
+        ...room,
+        activePlayers: room.users ? room.users.length : 0,
+      }),
+    );
+  }
+
+  async getById(id: number): Promise<Room | null> {
+    return await this.roomRepository.findOneBy({
+      id: id,
+    });
+  }
 
   async create(roomDto: CreateRoomDto): Promise<Room> {
     const user = await this.usersService.findOne(roomDto.userId);
@@ -39,3 +63,26 @@ export class RoomsService {
     return this.roomRepository.save(room);
   }
 }
+
+/**
+ *
+ *
+ * 1R
+ * 2R
+ * 3R
+ * 4R
+ * ..
+ * 50R
+ *
+ * SELECT *
+ * FROM table
+ * WHERE isActive = $1
+ * LIMIT 10 offset 0
+ *
+ * offset (page - 1) * 10
+ * LIMIT 10
+ * page 1  off 0
+ * page 2  off 10
+ * page 3  off 20
+ *
+ */

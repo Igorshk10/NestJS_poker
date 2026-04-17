@@ -4,6 +4,17 @@ import { Role } from "./role.entity";
 import { Room } from "../../rooms/entities/room.entity";
 import { Wallet } from "../../wallets/entities/wallet.entity";
 
+/**
+ select u.*
+ from user u
+ where u.id = 1
+
+ select *
+ from room r
+ where r.user_id = 1
+ */
+
+
 @Entity("users")
 export class User {
   @ApiProperty({ example: 1 })
